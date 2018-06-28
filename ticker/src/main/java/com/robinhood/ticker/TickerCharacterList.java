@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * @author Jin Cao, Robinhood
  */
-class TickerCharacterList {
+public class TickerCharacterList {
     private final int numOriginalCharacters;
     // The saved character list will always be of the format: EMPTY, list, list
     private final char[] characterList;

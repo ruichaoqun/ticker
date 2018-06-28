@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author Jin Cao
  */
-class TickerDrawMetrics {
+public class TickerDrawMetrics {
     private final Paint textPaint;
 
     // These are attributes on the text paint used for measuring and drawing the text on the
@@ -36,19 +36,19 @@ class TickerDrawMetrics {
     private final Map<Character, Float> charWidths = new HashMap<>(256);
     private float charHeight, charBaseline;
 
-    TickerDrawMetrics(Paint textPaint) {
+    public TickerDrawMetrics(Paint textPaint) {
         this.textPaint = textPaint;
         invalidate();
     }
 
-    void invalidate() {
+    public void invalidate() {
         charWidths.clear();
         final Paint.FontMetrics fm = textPaint.getFontMetrics();
         charHeight = fm.bottom - fm.top;
         charBaseline = -fm.top;
     }
 
-    float getCharWidth(char character) {
+    public float getCharWidth(char character) {
         if (character == TickerUtils.EMPTY_CHAR) {
             return 0;
         }
@@ -64,11 +64,11 @@ class TickerDrawMetrics {
         }
     }
 
-    float getCharHeight() {
+    public float getCharHeight() {
         return charHeight;
     }
 
-    float getCharBaseline() {
+    public float getCharBaseline() {
         return charBaseline;
     }
 }
