@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
@@ -14,9 +17,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.robinhood.ticker.R;
 import com.robinhood.ticker.TickerDrawMetrics;
+import com.robinhood.ticker.TickerView;
 
 import junit.framework.Test;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +48,9 @@ import java.util.List;
  * </table>
  */
 public class TestTickerView extends View {
+    private static final float DEFAULT_TEXT_SIZE = 12;
+    private static  final int DEFAULT_ANIMATOR_DURATION = 400;
+    private static final int DEFAULT_TEXT_COLOR = Color.BLACK;
 
     private List<TestTickerColumn> mTestTickerColumns = new ArrayList<>();
     private int mNumber = 0;
@@ -49,6 +59,11 @@ public class TestTickerView extends View {
     TickerDrawMetrics mTickerDrawMetrics = new TickerDrawMetrics(mTextPaint);
     private final Rect viewBounds = new Rect();
     private Paint mPaint = new Paint();
+
+    private int mAnimatorDuration = DEFAULT_ANIMATOR_DURATION;
+    private float mTextSize = DEFAULT_TEXT_SIZE;
+    private int mTextColor = DEFAULT_TEXT_COLOR;
+    private int mAnimatorDelay = 0;
 
     public TestTickerView(Context context) {
         this(context,null);
@@ -60,15 +75,30 @@ public class TestTickerView extends View {
 
     public TestTickerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAttr(context,attrs,defStyleAttr);
         init();
     }
 
-    private void init() {
-        mTextPaint.setTextSize(100);
+
+    private void initAttr(Context context, AttributeSet attrs, int defStyleAttr) {
+        final Resources res = context.getResources();
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TestTickerView,defStyleAttr,0);
+        mAnimatorDuration = array.getInt(R.styleable.TestTickerView_animatorDuration,DEFAULT_ANIMATOR_DURATION);
+
+        mTextColor = array.getColor(R.styleable.TestTickerView_android_textColor,DEFAULT_TEXT_COLOR);
+        mTextPaint.setColor(mTextColor);
+
+        mTextSize = array.getDimension(R.styleable.TestTickerView_android_textSize,DEFAULT_TEXT_SIZE);
+        mTextPaint.setTextSize(mTextSize);
         mTickerDrawMetrics.invalidate();
-        mValueAnimator.setDuration(2000);
+        setNumber(array.getInt(R.styleable.TestTickerView_number,0),false);
+        array.recycle();
+    }
+
+    private void init() {
+        mValueAnimator.setDuration(mAnimatorDuration);
         mValueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        mValueAnimator.setStartDelay(0);
+        mValueAnimator.setStartDelay(mAnimatorDelay);
         mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -92,16 +122,8 @@ public class TestTickerView extends View {
 
     }
 
-    public void setText(String s){
-        int number = 0;
-        if(!TextUtils.isEmpty(s)){
-            try {
-                number = Integer.valueOf(s);
-            }catch (NumberFormatException e){
-
-            }
-        }
-        setNumber(number,true);
+    public void setNumber(int number){
+        setNumber(number,number == 0 ?false:true);
     }
 
     public void setNumber(int number,boolean animator) {
@@ -117,7 +139,6 @@ public class TestTickerView extends View {
         }
         mNumber = number;
 
-        // First remove any zero-width columns
         for (int i = 0; i < mTestTickerColumns.size(); ) {
             final TestTickerColumn tickerColumn = mTestTickerColumns.get(i);
             if (tickerColumn.getCurrentWidth() > 0) {
@@ -186,16 +207,13 @@ public class TestTickerView extends View {
         realignAndClipCanvasForGravity(canvas, viewBounds, currentWidth, currentHeight);
     }
 
-    // VisibleForTesting
     static void realignAndClipCanvasForGravity(Canvas canvas, Rect viewBounds,
                                                float currentWidth, float currentHeight) {
         final int availableWidth = viewBounds.width();
         final int availableHeight = viewBounds.height();
 
-        float translationX = 0;
-        float translationY = 0;
-        translationY = viewBounds.top + (availableHeight - currentHeight) / 2f;
-        translationX = viewBounds.left + (availableWidth - currentWidth) / 2f;
+        float translationX = viewBounds.left + (availableWidth - currentWidth) / 2f;
+        float translationY = viewBounds.top + (availableHeight - currentHeight) / 2f;
         canvas.translate(translationX ,translationY);
         canvas.clipRect(0f, 0f, currentWidth, currentHeight);
     }

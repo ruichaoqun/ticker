@@ -20,4 +20,12 @@
         <attr name="android:textSize" tools:ignore="ResourceName" />
         <attr name="android:textStyle" tools:ignore="ResourceName" />
     </declare-styleable>
+
+    <declare-styleable name="TestTickerView" tools:ignore="ResourceName">
+        <attr name="animatorDuration" format="integer|reference"/>
+        <attr name="number" format="integer|reference"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:gravity"/>
+    </declare-styleable>
 </resources>

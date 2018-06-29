@@ -56,7 +56,7 @@ public class TestTickerColumn {
         mChars[0] = EMPTY_CHAR;
         for (int i = 0; i < numbers.length(); i++) {
             mChars[1 + i] = chars[i];
-            mChars[1 + 2 * i] = chars[i];
+            mChars[11 + i] = chars[i];
         }
     }
 
@@ -136,6 +136,7 @@ public class TestTickerColumn {
         if (mCurrentWidth == mTargetWidth && mTargetWidth != currentTargetWidth) {
             this.mCurrentWidth = this.mTargetWidth = currentTargetWidth;
         }
+        mOriginalChar = mCurrentChar = mTargetChar;
     }
 
     public void draw(Canvas canvas, TextPaint textPaint) {

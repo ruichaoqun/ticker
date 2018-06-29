@@ -2,6 +2,7 @@ package com.robinhood.ticker.sample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.robinhood.ticker.test.TestTickerView;
@@ -15,7 +16,6 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
         testTickerView = findViewById(R.id.textView);
-        testTickerView.setNumber(123456,false);
     }
 
     public void test(View view) {
